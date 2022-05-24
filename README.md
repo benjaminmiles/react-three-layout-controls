@@ -1,8 +1,8 @@
 # React Three Layout Controls
 
-_An composition helper that combines `TransformControls`, `Select`, and `OrbitCamera` from [Drei](https://github.com/pmndrs/drei)._
+_An composition component that combines `TransformControls`, `Select`, and `OrbitCamera` from [Drei](https://github.com/pmndrs/drei)._
 
-### Installation
+### Run Demo
 
 ```
 npm install
@@ -44,10 +44,13 @@ const Scene = () => {
 };
 ```
 
-## Hot Keys
+## Transform Modes
 
-- Cycle through transform control modes with the `t` hotkey.
-- Use your copy command to add the current transform props to your clipboard.
+Cycle through transform control modes by double-clicking an object or with the `t` hotkey.
+
+## Copy To Clipboard
+
+Use your keyboards's copy command to add the last selected transforms prop to your clipboard. By default it will copy the values as React props, but you can change that behavior by passing "props", "arrays", or "vectors" to the 'copyFormat' prop.
 
 ## Advanced Use
 
@@ -109,18 +112,17 @@ const Scene = () => {
 import LayoutControls from "./LayoutControls";
 
 const Scene = () => {
-  const sceneRef = React.useRef();
-
   return (
     <LayoutControls
-      auto // Automatically interact with all meshes
+      auto={true} // Automatically interact with all meshes
       copyFormat={"props"} // What format to copy to the clipboard  "props" || "arrays" || "vectors"
       cycleKey={"t"} // Hot key for cycling transform modes,
-      enabled // Turn LayoutControls on/off
+      enabled={true} // Turn LayoutControls on/off
       layers={100} // Parent bubbling limit for the controllable prop
-      orbit={objectRef} // Adds an orbit camera with this ref as the look-at target
+      orbit={ref} // Adds an orbit camera to the scene and sets it as the default camera. Pass an object ref to set a look-at target.
       snap={0} // Default unit movement
-      // any other TransformControl props
+
+      // include any valid TransformControl props
     />
   );
 };

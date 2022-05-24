@@ -1,19 +1,16 @@
 {
-  "name": "react-three-vite",
-  "version": "1.0.1",
-  "description": "A simple React Three Fiber + Vite starter with an import-ready CodeSandbox config.",
+  "name": "react-three-layout-controls",
+  "version": "1.0.0",
+  "description": "A React Three Fiber composition component that combines TransformControls, Select, and OrbitCamera from Drei.",
   "keywords": [
     "r3f",
     "react",
     "three",
-    "vite",
-    "starter",
     "react three fiber",
-    "sandbox",
-    "codesandbox"
+    "TransformControls"
   ],
   "author": "Benjamin Miles <talk@benjaminmiles.com> (https://github.com/benjaminmiles)",
-  "repository": "github:benjaminmiles/react-three-vite",
+  "repository": "github:benjaminmiles/react-three-layout-controls",
   "license": "MIT",
   "dependencies": {
     "@react-three/drei": "9.11.3",

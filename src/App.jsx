@@ -1,28 +1,35 @@
-import React, { useRef } from "react";
+import React from "react";
 import { Canvas } from "@react-three/fiber";
 import { Box } from "@react-three/drei";
 import LayoutControls from "./LayoutControls";
 
 const Scene = () => {
-  const sceneRef = useRef();
-
   return (
     <>
       <ambientLight />
-      <LayoutControls auto orbit={sceneRef}>
-        <group ref={sceneRef}>
-          <Box position={[-1.5, 0, 0]}>
+      <LayoutControls auto orbit>
+        <Box position={[-1.5, 0, 0]}>
+          <meshNormalMaterial />
+        </Box>
+
+        <group controllable>
+          <Box args={[0.3, 0.3, 0.3]} position={[-0.3, 0, 0]}>
             <meshNormalMaterial />
           </Box>
-
-          <Box position={[0, 0, 0]}>
+          <Box args={[0.3, 0.3, 0.3]} position={[0, 0.3, 0]}>
             <meshNormalMaterial />
           </Box>
-
-          <Box position={[1.5, 0, 0]}>
+          <Box args={[0.3, 0.3, 0.3]} position={[0, -0.3, 0]}>
+            <meshNormalMaterial />
+          </Box>
+          <Box args={[0.3, 0.3, 0.3]} position={[0.3, 0, 0]}>
             <meshNormalMaterial />
           </Box>
         </group>
+
+        <Box position={[1.5, 0, 0]}>
+          <meshNormalMaterial />
+        </Box>
       </LayoutControls>
     </>
   );

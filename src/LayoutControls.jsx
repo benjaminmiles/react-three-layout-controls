@@ -202,7 +202,7 @@ export const LayoutControls = ({
         {...props}
       />
 
-      {enabled && lookAtTarget && <OrbitControls target={lookAtTarget} makeDefault />}
+      {enabled && (orbit || lookAtTarget) && <OrbitControls target={lookAtTarget} makeDefault />}
     </>
   );
 };
