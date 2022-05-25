@@ -152,14 +152,11 @@ export const LayoutControls = ({
     } else {
       setSelectedModel(undefined);
     }
-  }, [children, enabled, model, scene]);
 
-  // Set look at target from prop
-  useEffect(() => {
     if (orbit) {
-      setLookAtTarget(orbit?.current?.position || orbit?.position || null);
+      setLookAtTarget(orbit?.current?.position || orbit?.position || undefined);
     }
-  }, [orbit]);
+  }, [children, enabled, model, scene, orbit]);
 
   // Copy command
   useEffect(() => {
