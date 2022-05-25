@@ -29,7 +29,7 @@ import LayoutControls from "./LayoutControls";
 
 const Scene = () => {
   return (
-    <LayoutControls auto>
+    <LayoutControls>
       <Box position={[-1.5, 0, 0]}>
         <meshNormalMaterial />
       </Box>
@@ -56,7 +56,7 @@ Use your keyboards's copy command to add the last selected transforms prop to yo
 
 ## Advanced Use
 
-If you want more control, just omit `auto` and add the `controllable` prop to your mesh.
+If you want full control of what is transformable, pass `auto={false}` and add a `controllable` prop to your mesh or group components. There just needs to be at least one mesh geometry in a group for it to be selectable.
 
 ```jsx
 import { Box } from "@react-three/drei";
@@ -64,7 +64,7 @@ import LayoutControls from "./LayoutControls";
 
 const Scene = () => {
   return (
-    <LayoutControls>
+    <LayoutControls auto={false}>
       <Box position={[-1.5, 0, 0]} controllable>
         <meshNormalMaterial />
       </Box>
@@ -89,7 +89,7 @@ import LayoutControls from "./LayoutControls";
 
 const Scene = () => {
   return (
-    <LayoutControls auto>
+    <LayoutControls>
       <group controllable>
         <Box position={[-1.5, 0, 0]}>
           <meshNormalMaterial />
@@ -116,7 +116,7 @@ import LayoutControls from "./LayoutControls";
 const Scene = () => {
   return (
     <LayoutControls
-      auto={true} // Automatically interact with all meshes
+      auto={true} // Automatically interact with all children meshes
       copyFormat={"props"} // What format to copy to the clipboard  "props" || "arrays" || "vectors"
       cycleKey={"t"} // Hot key for cycling transform modes,
       enabled={true} // Turn LayoutControls on/off

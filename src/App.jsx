@@ -8,7 +8,7 @@ const Scene = () => {
   return (
     <>
       <ambientLight />
-      <LayoutControls auto orbit selectedModel={"boxGroup"}>
+      <LayoutControls orbit selectedModel={"boxGroup"}>
         <Box position={[-1.5, 0, 0]}>
           <meshNormalMaterial />
         </Box>

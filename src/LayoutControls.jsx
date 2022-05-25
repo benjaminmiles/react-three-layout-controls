@@ -24,7 +24,7 @@ function useTransformControls(onMount, onUnmount) {
 }
 
 export const LayoutControls = ({
-  auto = false,
+  auto = true,
   children,
   copyFormat = "props", // "props" || "arrays" || "vectors"
   cycleKey = "t",
