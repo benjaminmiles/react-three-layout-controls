@@ -1,6 +1,6 @@
 # React Three Layout Controls
 
-_An composition component that combines `TransformControls`, `Select`, and `OrbitCamera` from [Drei](https://github.com/pmndrs/drei)._
+_A composition component that combines `TransformControls`, `Select`, and `OrbitCamera` from [Drei](https://github.com/pmndrs/drei) into an easy-to-use layout helper._
 
 ### Run Demo
 
