@@ -119,8 +119,10 @@ const Scene = () => {
       cycleKey={"t"} // Hot key for cycling transform modes,
       enabled={true} // Turn LayoutControls on/off
       layers={100} // Parent bubbling limit for the controllable prop
-      orbit={ref} // Adds an orbit camera to the scene and sets it as the default camera. Pass an object ref to set a look-at target.
+      selectedModel={ref || "name"} // Takes an object ref or an object name. If searching by name, make sure it's a child, or set the scene prop.
+      orbit={true || ref} // Adds an orbit camera to the scene and sets it as the default camera. Pass an object ref to set a look-at target.
       snap={0} // Default unit movement
+      scene={ref} // Pass a scene or object ref to search for object names outside of the children
 
       // include any valid TransformControl props
     />

@@ -2,7 +2,7 @@ import { useEffect, useCallback, useState, useRef } from "react";
 import { TransformControls, OrbitControls, Select } from "@react-three/drei";
 import { Vector3 } from "three";
 
-function useRefWithCallback(onMount, onUnmount) {
+function useTransformControls(onMount, onUnmount) {
   const nodeRef = useRef(null);
 
   const setNodeRef = useCallback(
@@ -30,7 +30,7 @@ export const LayoutControls = ({
   cycleKey = "t",
   enabled = true,
   layers = 100,
-  model,
+  selectedModel: model,
   orbit,
   scene,
   snap = 0,
@@ -47,14 +47,27 @@ export const LayoutControls = ({
 
   const modes = ["translate", "rotate", "scale"];
   const mode = useRef(0);
+  const selectRef = useRef();
 
   const [selectedModel, setSelectedModel] = useState(null);
   const [lookAtTarget, setLookAtTarget] = useState(null);
 
-  const [transformControlsRef, setTransformControlsRef] = useRefWithCallback(
+  const [transformControlsRef, setTransformControlsRef] = useTransformControls(
     node => node.addEventListener("objectChange", updateTransforms),
     node => node.removeEventListener("objectChange", updateTransforms)
   );
+
+  const searchForObjectByName = name => {
+    typeof name !== "string" && false;
+
+    if (scene?.current) {
+      return scene.current.getObjectByName(name);
+    } else if (selectRef?.current) {
+      return selectRef.current.getObjectByName(name);
+    }
+
+    false;
+  };
 
   const copyTransforms = e => {
     e.preventDefault();
@@ -122,22 +135,24 @@ export const LayoutControls = ({
 
   // Update the transforms object when the selected model changes
   useEffect(() => {
-    updateTransforms(selectedModel);
+    if (selectedModel) {
+      updateTransforms(selectedModel);
+    } else {
+      if (transformControlsRef.current) {
+        transformControlsRef.current.detach();
+      }
+    }
   }, [selectedModel]);
 
   // Set transform object from prop
   useEffect(() => {
-    if (model) {
-      const modelObject3D = model?.current || scene?.getObjectByName(model) || null;
-      modelObject3D && setSelectedModel(model?.current || model);
+    if (enabled && model) {
+      const modelObject3D = model?.current || searchForObjectByName(model) || undefined;
+      modelObject3D && setSelectedModel(modelObject3D);
+    } else {
+      setSelectedModel(undefined);
     }
-  }, [model, scene]);
-
-  // Reset if selected object if children change
-  useEffect(() => {
-    console.log("loaded");
-    setSelectedModel(null);
-  }, [children]);
+  }, [children, enabled, model, scene]);
 
   // Set look at target from prop
   useEffect(() => {
@@ -150,7 +165,6 @@ export const LayoutControls = ({
   useEffect(() => {
     document.addEventListener("copy", copyTransforms);
     document.addEventListener("keypress", onKeyPressHandler);
-
     return () => {
       document.removeEventListener("copy", copyTransforms);
       document.removeEventListener("keypress", onKeyPressHandler);
@@ -159,50 +173,54 @@ export const LayoutControls = ({
 
   return (
     <>
-      <Select
-        onChange={e => enabled && onSelectHandler(e)}
-        onDoubleClick={e => enabled && cycleModes()}
-        onPointerOver={null}
-        onPointerOut={null}
-        onPointerMissed={() => {
-          setSelectedModel(null);
-        }}
-        filter={meshes => {
-          const mesh = meshes[0];
-          let selected = auto || mesh?.controllable ? mesh : null;
+      {enabled ? (
+        <>
+          <TransformControls
+            ref={setTransformControlsRef}
+            enabled={enabled}
+            showX={enabled}
+            showY={enabled}
+            showZ={enabled}
+            object={searchForObjectByName(selectedModel) || selectedModel}
+            translationSnap={snap}
+            rotationSnap={snap}
+            scaleSnap={snap}
+            {...props}
+          />
+          <Select
+            onChange={e => enabled && onSelectHandler(e)}
+            onDoubleClick={e => enabled && cycleModes()}
+            onPointerOver={null}
+            onPointerOut={null}
+            onPointerMissed={() => {
+              setSelectedModel(null);
+            }}
+            filter={meshes => {
+              const mesh = meshes[0];
+              let selected = auto || mesh?.controllable ? mesh : null;
 
-          if (!mesh?.controllable) {
-            let parent = mesh?.parent;
+              if (!mesh?.controllable) {
+                let parent = mesh?.parent;
 
-            for (let layer = 0; layer < layers; layer++) {
-              if (parent?.controllable) {
-                selected = parent;
-                break;
-              } else {
-                parent = parent?.parent;
+                for (let layer = 0; layer < layers; layer++) {
+                  if (parent?.controllable) {
+                    selected = parent;
+                    break;
+                  } else {
+                    parent = parent?.parent;
+                  }
+                }
               }
-            }
-          }
-          return [selected];
-        }}
-      >
-        {children}
-      </Select>
-
-      <TransformControls
-        ref={setTransformControlsRef}
-        enabled={enabled}
-        showX={enabled}
-        showY={enabled}
-        showZ={enabled}
-        object={typeof selectedModel === "string" && scene ? scene.getObjectByName(selectedModel) : selectedModel}
-        translationSnap={snap}
-        rotationSnap={snap}
-        scaleSnap={snap}
-        {...props}
-      />
-
-      {enabled && (orbit || lookAtTarget) && <OrbitControls target={lookAtTarget} makeDefault />}
+              return [selected];
+            }}
+          >
+            <group ref={selectRef}>{children}</group>
+          </Select>
+          {(orbit || lookAtTarget) && <OrbitControls target={lookAtTarget} makeDefault />}
+        </>
+      ) : (
+        <>{children}</>
+      )}
     </>
   );
 };
