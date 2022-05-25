@@ -58,15 +58,15 @@ export const LayoutControls = ({
   );
 
   const searchForObjectByName = name => {
-    typeof name !== "string" && false;
-
-    if (scene?.current) {
+    if (typeof name !== "string") {
+      return null;
+    } else if (scene?.current) {
       return scene.current.getObjectByName(name);
     } else if (selectRef?.current) {
       return selectRef.current.getObjectByName(name);
     }
 
-    false;
+    return null;
   };
 
   const copyTransforms = e => {

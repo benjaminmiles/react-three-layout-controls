@@ -1,14 +1,23 @@
-import React, { useRef } from "react";
+import React, { useRef, useState, useEffect } from "react";
 import { Canvas } from "@react-three/fiber";
 import { Box } from "@react-three/drei";
 import LayoutControls from "./LayoutControls";
 
 const Scene = () => {
+  // Set initially selected model by name
+  const [selectedModel, setSelectedModel] = useState("boxGroup");
   const ref = useRef();
+
+  // Change the model without interaction
+  // useEffect(() => {
+  //   setSelectedModel(ref);
+  // }, []);
+
   return (
     <>
       <ambientLight />
-      <LayoutControls orbit selectedModel={"boxGroup"}>
+
+      <LayoutControls orbit selectedModel={selectedModel}>
         <Box position={[-1.5, 0, 0]}>
           <meshNormalMaterial />
         </Box>
@@ -20,7 +29,7 @@ const Scene = () => {
           <Box args={[0.3, 0.3, 0.3]} position={[0, 0.3, 0]}>
             <meshNormalMaterial />
           </Box>
-          <Box args={[0.3, 0.3, 0.3]} position={[0, -0.3, 0]}>
+          <Box args={[0.3, 0.3, 0.3]} position={[0, -0.3, 0]} ref={ref}>
             <meshNormalMaterial />
           </Box>
           <Box args={[0.3, 0.3, 0.3]} position={[0.3, 0, 0]}>
