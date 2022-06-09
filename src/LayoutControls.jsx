@@ -6,7 +6,7 @@ function useTransformControls(onMount, onUnmount) {
   const nodeRef = useRef(null);
 
   const setNodeRef = useCallback(
-    node => {
+    (node) => {
       if (nodeRef.current) {
         onUnmount(nodeRef.current);
       }
@@ -24,9 +24,10 @@ function useTransformControls(onMount, onUnmount) {
 }
 
 export const LayoutControls = ({
-  auto = true,
+  autoSelect = true,
   children,
   copyFormat = "props", // "props" || "arrays" || "vectors"
+  copyPoints = 3,
   cycleKey = "t",
   enabled = true,
   layers = 100,
@@ -53,23 +54,31 @@ export const LayoutControls = ({
   const [lookAtTarget, setLookAtTarget] = useState(null);
 
   const [transformControlsRef, setTransformControlsRef] = useTransformControls(
-    node => node.addEventListener("objectChange", updateTransforms),
-    node => node.removeEventListener("objectChange", updateTransforms)
+    (node) => node.addEventListener("objectChange", updateTransforms),
+    (node) => node.removeEventListener("objectChange", updateTransforms)
   );
 
-  const searchForObjectByName = name => {
-    if (typeof name !== "string") {
-      return null;
-    } else if (scene?.current) {
-      return scene.current.getObjectByName(name);
-    } else if (selectRef?.current) {
-      return selectRef.current.getObjectByName(name);
-    }
+  const searchForObjectByName = useCallback(
+    (name) => {
+      if (typeof name !== "string") {
+        return null;
+      } else if (scene?.current) {
+        return scene.current.getObjectByName(name);
+      } else if (selectRef?.current) {
+        return selectRef.current.getObjectByName(name);
+      }
 
-    return null;
+      return null;
+    },
+    [selectedModel]
+  );
+
+  const toFixedNumber = function (float = 0.0, decimals = 3, base = 10) {
+    let power = Math.pow(base || 10, decimals);
+    return Math.round(parseFloat(float) * power) / power;
   };
 
-  const copyTransforms = e => {
+  const copyTransforms = (e) => {
     e.preventDefault();
     const { values, props, position, rotation, scale } = transforms.current;
 
@@ -96,23 +105,31 @@ export const LayoutControls = ({
     console.log(transforms.current);
   };
 
-  const updateTransforms = o => {
-    const { position, rotation, scale } = transforms.current;
-    const object = o?.target?.object || o?.current || o || null;
+  const updateTransforms = useCallback(
+    (o) => {
+      const { position, rotation, scale } = transforms.current;
+      const object = o?.target?.object || o?.current || o || null;
 
-    if (object) {
-      position.copy(object.position);
-      rotation.copy(object.rotation);
-      scale.copy(object.scale);
-      transforms.current.name = object.name;
-      transforms.current.values = {
-        position: position.toArray(),
-        rotation: rotation.toArray(),
-        scale: scale.toArray(),
-      };
-      transforms.current.props = `position={[${position.toArray()}]} rotation={[${rotation.toArray()}]} scale={[${scale.toArray()}]}`;
-    }
-  };
+      if (object) {
+        position.copy(object.position);
+        rotation.copy(object.rotation);
+        scale.copy(object.scale);
+
+        position.set(toFixedNumber(position.x, copyPoints), toFixedNumber(position.y, copyPoints), toFixedNumber(position.z, copyPoints));
+        rotation.set(toFixedNumber(rotation.x, copyPoints), toFixedNumber(rotation.y, copyPoints), toFixedNumber(rotation.z, copyPoints));
+        scale.set(toFixedNumber(scale.x, copyPoints), toFixedNumber(scale.y, copyPoints), toFixedNumber(scale.z, copyPoints));
+
+        transforms.current.name = object.name;
+        transforms.current.values = {
+          position: position.toArray(),
+          rotation: rotation.toArray(),
+          scale: scale.toArray(),
+        };
+        transforms.current.props = `position={[${position.toArray()}]} rotation={[${rotation.toArray()}]} scale={[${scale.toArray()}]}`;
+      }
+    },
+    [copyPoints]
+  );
 
   const cycleModes = () => {
     mode.current = (mode.current + 1) % modes.length;
@@ -121,13 +138,13 @@ export const LayoutControls = ({
     }
   };
 
-  const onKeyPressHandler = e => {
+  const onKeyPressHandler = (e) => {
     if (enabled && e?.key.toLowerCase() === cycleKey) {
       cycleModes();
     }
   };
 
-  const onSelectHandler = objects => {
+  const onSelectHandler = (objects) => {
     if (objects?.length > 0) {
       setSelectedModel(objects[0]);
     }
@@ -185,16 +202,16 @@ export const LayoutControls = ({
             {...props}
           />
           <Select
-            onChange={e => enabled && onSelectHandler(e)}
-            onDoubleClick={e => enabled && cycleModes()}
+            onChange={(e) => enabled && onSelectHandler(e)}
+            onDoubleClick={(e) => enabled && cycleModes()}
             onPointerOver={null}
             onPointerOut={null}
             onPointerMissed={() => {
               setSelectedModel(null);
             }}
-            filter={meshes => {
+            filter={(meshes) => {
               const mesh = meshes[0];
-              let selected = auto || mesh?.controllable ? mesh : null;
+              let selected = autoSelect || mesh?.controllable ? mesh : null;
 
               if (!mesh?.controllable) {
                 let parent = mesh?.parent;

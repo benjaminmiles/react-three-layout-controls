@@ -17,8 +17,8 @@ const Scene = () => {
     <>
       <ambientLight />
 
-      <LayoutControls orbit selectedModel={selectedModel}>
-        <Box position={[-1.5, 0, 0]}>
+      <LayoutControls orbit={"BoxOne"} selectedModel={selectedModel}>
+        <Box name='BoxOne' position={[-1.5, 0, 0]}>
           <meshNormalMaterial />
         </Box>
 
