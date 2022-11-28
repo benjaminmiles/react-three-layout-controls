@@ -2,7 +2,7 @@
 
 _A composition component that combines `TransformControls`, `Select`, and `OrbitCamera` from [Drei](https://github.com/pmndrs/drei) into an easy-to-use layout helper._
 
-[Live Demo](https://codesandbox.io/s/s3tvi1)
+[Live Demo](https://codesandbox.io/p/github/benjaminmiles/react-three-layout-controls/main)
 
 ### Install
 
