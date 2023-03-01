@@ -13,15 +13,15 @@
   "repository": "github:benjaminmiles/react-three-layout-controls",
   "license": "MIT",
   "dependencies": {
-    "@react-three/drei": "^9.45.0",
-    "@react-three/fiber": "^8.9.1",
+    "@react-three/drei": "^9.56.28",
+    "@react-three/fiber": "^8.11.5",
     "react": "18.2.0",
     "react-dom": "18.2.0",
-    "three": "^0.146.0"
+    "three": "^0.150.1"
   },
   "devDependencies": {
-    "@vitejs/plugin-react": "^2.2.0",
-    "vite": "^3.2.4"
+    "@vitejs/plugin-react": "^3.1.0",
+    "vite": "^4.1.4"
   },
   "scripts": {
     "dev": "vite --host",
